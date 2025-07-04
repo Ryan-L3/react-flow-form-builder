@@ -14,7 +14,7 @@ A visual form builder application built with React Flow and Next.js that allows 
 1. Clone the repository:
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Ryan-L3/react-flow-form-builder.git
 cd react-flow-test
 ```
 
