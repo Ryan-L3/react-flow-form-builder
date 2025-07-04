@@ -154,6 +154,77 @@ function MasterOutputNode({ data, isConnectable }) {
             </label>
           </div>
         );
+      case "datePicker":
+        return (
+          <div key={index}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "13px",
+                fontWeight: "bold",
+                marginBottom: "4px",
+                color: "#333",
+              }}
+            >
+              {field.label || `Date Field ${index + 1}`}
+              {field.required && <span style={{ color: "#f44336" }}>*</span>}
+            </label>
+            <input
+              type="date"
+              max={field.maxDate || undefined}
+              style={{
+                width: "100%",
+                padding: "8px 10px",
+                border: "1px solid #ddd",
+                borderRadius: "4px",
+                fontSize: "13px",
+                transition: "border-color 0.2s",
+                outline: "none",
+              }}
+              onFocus={(e) => (e.target.style.borderColor = "#2196F3")}
+              onBlur={(e) => (e.target.style.borderColor = "#ddd")}
+            />
+            <div style={{ fontSize: "11px", color: "#888", marginTop: "2px" }}>
+              Format: YYYY-MM-DD
+            </div>
+          </div>
+        );
+
+      case "timePicker":
+        return (
+          <div key={index}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "13px",
+                fontWeight: "bold",
+                marginBottom: "4px",
+                color: "#333",
+              }}
+            >
+              {field.label || `Time Field ${index + 1}`}
+              {field.required && <span style={{ color: "#f44336" }}>*</span>}
+            </label>
+            <input
+              type="time"
+              max={field.maxTime || undefined}
+              style={{
+                width: "100%",
+                padding: "8px 10px",
+                border: "1px solid #ddd",
+                borderRadius: "4px",
+                fontSize: "13px",
+                transition: "border-color 0.2s",
+                outline: "none",
+              }}
+              onFocus={(e) => (e.target.style.borderColor = "#2196F3")}
+              onBlur={(e) => (e.target.style.borderColor = "#ddd")}
+            />
+            <div style={{ fontSize: "11px", color: "#888", marginTop: "2px" }}>
+              Format: 24 Hour (HH:MM)
+            </div>
+          </div>
+        );
 
       default:
         return (

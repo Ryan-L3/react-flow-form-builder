@@ -1,6 +1,6 @@
 import { Handle, Position } from "@xyflow/react";
 
-function CheckboxNode({ data, isConnectable }) {
+function TimePickerNode({ data, isConnectable }) {
   return (
     <div
       style={{
@@ -21,7 +21,7 @@ function CheckboxNode({ data, isConnectable }) {
           fontSize: "14px",
         }}
       >
-        ☑️ Checkbox Field
+        🕐 Time Picker Field
       </div>
 
       {/* Field Label Input */}
@@ -47,15 +47,12 @@ function CheckboxNode({ data, isConnectable }) {
         />
       </div>
 
-      {/* Checkbox Text Input */}
+      {/* Time */}
       <div style={{ marginBottom: "8px" }}>
-        <label style={{ fontSize: "12px", color: "#666" }}>
-          Checkbox Text:
-        </label>
+        <label style={{ fontSize: "12px", color: "#666" }}>Time:</label>
         <input
-          type="text"
-          placeholder="Text next to checkbox"
-          value={data.checkboxText || ""}
+          type="time"
+          value={data.time || ""}
           style={{
             width: "100%",
             padding: "4px 8px",
@@ -66,13 +63,13 @@ function CheckboxNode({ data, isConnectable }) {
           }}
           onChange={(e) => {
             if (data.onChange) {
-              data.onChange(data.id, { ...data, checkboxText: e.target.value });
+              data.onChange(data.id, { ...data, time: e.target.value });
             }
           }}
         />
       </div>
 
-      {/* Default Checked Setting */}
+      {/* Required Field Option */}
       <div style={{ marginBottom: "8px" }}>
         <label
           style={{
@@ -86,21 +83,21 @@ function CheckboxNode({ data, isConnectable }) {
         >
           <input
             type="checkbox"
-            checked={data.defaultChecked || false}
+            checked={data.required || false}
             onChange={(e) => {
               if (data.onChange) {
                 data.onChange(data.id, {
                   ...data,
-                  defaultChecked: e.target.checked,
+                  required: e.target.checked,
                 });
               }
             }}
           />
-          Default checked
+          Required field
         </label>
       </div>
 
-      {/* Preview of the actual checkbox */}
+      {/* Preview of the actual time picker */}
       <div
         style={{
           background: "#f8f9fa",
@@ -113,28 +110,30 @@ function CheckboxNode({ data, isConnectable }) {
           Preview:
         </div>
         <div
-          style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "6px" }}
-        >
-          {data.label || "Checkbox Group Label"}
-        </div>
-        <label
           style={{
+            fontSize: "12px",
+            fontWeight: "bold",
+            marginBottom: "2px",
             display: "flex",
             alignItems: "center",
-            gap: "6px",
-            fontSize: "12px",
-            color: "#333",
-            cursor: "pointer",
+            gap: "4px",
           }}
         >
-          <input
-            type="checkbox"
-            checked={data.defaultChecked || false}
-            disabled
-            readOnly
-          />
-          {data.checkboxText || "Checkbox option text"}
-        </label>
+          {data.label || "Time Field Label"}
+          {data.required && <span style={{ color: "#f44336" }}>*</span>}
+        </div>
+        <input
+          type="time"
+          max={data.time || undefined}
+          style={{
+            width: "100%",
+            padding: "4px 8px",
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+            fontSize: "12px",
+          }}
+          disabled
+        />
       </div>
 
       {/* Output Handle */}
@@ -144,7 +143,7 @@ function CheckboxNode({ data, isConnectable }) {
         id="output"
         isConnectable={isConnectable}
         style={{
-          background: "#E91E63",
+          background: "#795548",
           width: "12px",
           height: "12px",
         }}
@@ -153,4 +152,4 @@ function CheckboxNode({ data, isConnectable }) {
   );
 }
 
-export default CheckboxNode;
+export default TimePickerNode;

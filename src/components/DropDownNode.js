@@ -68,7 +68,7 @@ function DropDownNode({ data, isConnectable }) {
         <input
           type="text"
           placeholder="Enter field label"
-          value={data.label || ""} // FIXED: changed from defaultValue
+          value={data.label || ""}
           style={{
             width: "100%",
             padding: "4px 8px",

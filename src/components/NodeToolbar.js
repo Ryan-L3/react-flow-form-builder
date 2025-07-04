@@ -28,6 +28,18 @@ function NodeToolbar({ onAddNode }) {
       icon: "☑️",
       description: "True/false selection",
     },
+    {
+      type: "datePicker",
+      label: "Date Picker",
+      icon: "📅",
+      description: "Date selection field",
+    },
+    {
+      type: "timePicker",
+      label: "Time Picker",
+      icon: "🕐",
+      description: "Time selection field",
+    },
   ];
 
   const handleDragStart = (event, nodeType) => {
@@ -122,26 +134,26 @@ function NodeToolbar({ onAddNode }) {
                 padding: "10px",
                 marginBottom: "8px",
                 cursor: "grab",
-                transition: "all 0.2s ease",
+                // transition: "all 0.2s ease",
                 display: "flex",
                 alignItems: "center",
                 gap: "8px",
               }}
               onMouseOver={(e) => {
-                e.target.style.background = "#e3f2fd";
-                e.target.style.borderColor = "#2196F3";
-                e.target.style.transform = "translateY(-1px)";
+                e.currentTarget.style.background = "#e3f2fd";
+                e.currentTarget.style.borderColor = "#2196F3";
+                e.currentTarget.style.transform = "translateY(-1px)";
               }}
               onMouseOut={(e) => {
-                e.target.style.background = "#f8f9fa";
-                e.target.style.borderColor = "#ddd";
-                e.target.style.transform = "translateY(0)";
+                e.currentTarget.style.background = "#f8f9fa";
+                e.currentTarget.style.borderColor = "#ddd";
+                e.currentTarget.style.transform = "translateY(0)";
               }}
               onMouseDown={(e) => {
-                e.target.style.cursor = "grabbing";
+                e.currentTarget.style.cursor = "grabbing";
               }}
               onMouseUp={(e) => {
-                e.target.style.cursor = "grab";
+                e.currentTarget.style.cursor = "grab";
               }}
             >
               <span style={{ fontSize: "18px" }}>{node.icon}</span>

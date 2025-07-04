@@ -7,16 +7,19 @@ import {
   applyEdgeChanges,
   addEdge,
   ReactFlowProvider,
+  MiniMap,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
-// Import our custom nodes and toolbar
+// Import custom nodes and toolbar
 import TextInputNode from "./TextInputNode";
 import TextAreaNode from "./TextAreaNode";
 import DropDownNode from "./DropDownNode";
 import CheckboxNode from "./CheckboxNode";
 import MasterOutputNode from "./MasterOutputNode";
 import NodeToolbar from "./NodeToolbar";
+import DatePickerNode from "./DatePickerNode";
+import TimePickerNode from "./TimePickerNode";
 
 // Define the custom node types
 const nodeTypes = {
@@ -24,10 +27,12 @@ const nodeTypes = {
   textArea: TextAreaNode,
   dropdown: DropDownNode,
   checkbox: CheckboxNode,
+  datePicker: DatePickerNode,
+  timePicker: TimePickerNode,
   masterOutput: MasterOutputNode,
 };
 
-let nodeId = 2; // Counter for new node IDs
+let nodeId = 2;
 
 // Inner component that uses React Flow hooks
 function FlowContent() {
@@ -87,6 +92,23 @@ function FlowContent() {
           checkboxText: "I agree to the terms",
           defaultChecked: false,
         };
+      case "datePicker":
+        return {
+          ...baseData,
+          label: "New Date Field",
+          dateFormat: "YYYY-MM-DD",
+          defaultToday: false,
+          required: false,
+        };
+      case "timePicker":
+        return {
+          ...baseData,
+          label: "New Time Field",
+          timeFormat: "24h",
+          step: "1",
+          defaultNow: false,
+          required: false,
+        };
       default:
         return baseData;
     }
@@ -130,6 +152,7 @@ function FlowContent() {
           connectedFields: [],
         },
         position: { x: 500, y: 200 },
+        deletable: false,
       },
     ];
 
@@ -152,9 +175,14 @@ function FlowContent() {
               const sourceNode = currentNodes.find((n) => n.id === edge.source);
               if (
                 sourceNode &&
-                ["textInput", "textArea", "dropdown", "checkbox"].includes(
-                  sourceNode.type
-                )
+                [
+                  "textInput",
+                  "textArea",
+                  "dropdown",
+                  "checkbox",
+                  "datePicker",
+                  "timePicker",
+                ].includes(sourceNode.type)
               ) {
                 return {
                   id: sourceNode.id,
@@ -165,6 +193,9 @@ function FlowContent() {
                   checkboxText: sourceNode.data.checkboxText,
                   defaultChecked: sourceNode.data.defaultChecked,
                   rows: sourceNode.data.rows,
+                  maxDate: sourceNode.data.maxDate,
+                  maxTime: sourceNode.data.maxTime,
+                  required: sourceNode.data.required,
                 };
               }
               return null;
@@ -246,7 +277,8 @@ function FlowContent() {
         fitView
       >
         <Background />
-        <Controls />
+        <MiniMap pannable zoomable />
+        <Controls position="top-right" />
       </ReactFlow>
 
       {/* Node Toolbar */}
