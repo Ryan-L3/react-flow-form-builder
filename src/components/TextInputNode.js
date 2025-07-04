@@ -30,7 +30,7 @@ function TextInputNode({ data, isConnectable }) {
         <input
           type="text"
           placeholder="Enter field label"
-          defaultValue={data.label || ""}
+          value={data.label || ""} // Changed from defaultValue to value
           style={{
             width: "100%",
             padding: "4px 8px",
@@ -54,7 +54,7 @@ function TextInputNode({ data, isConnectable }) {
         <input
           type="text"
           placeholder="Enter placeholder text"
-          defaultValue={data.placeholder || ""}
+          value={data.placeholder || ""} // Changed from defaultValue to value
           style={{
             width: "100%",
             padding: "4px 8px",

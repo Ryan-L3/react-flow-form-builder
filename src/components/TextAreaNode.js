@@ -30,7 +30,7 @@ function TextAreaNode({ data, isConnectable }) {
         <input
           type="text"
           placeholder="Enter field label"
-          defaultValue={data.label || ""}
+          value={data.label || ""} // FIXED: changed from defaultValue
           style={{
             width: "100%",
             padding: "4px 8px",
@@ -53,7 +53,7 @@ function TextAreaNode({ data, isConnectable }) {
         <input
           type="text"
           placeholder="Enter placeholder text"
-          defaultValue={data.placeholder || ""}
+          value={data.placeholder || ""} // FIXED: changed from defaultValue
           style={{
             width: "100%",
             padding: "4px 8px",
@@ -77,7 +77,7 @@ function TextAreaNode({ data, isConnectable }) {
           type="number"
           min="2"
           max="10"
-          defaultValue={data.rows || 3}
+          value={data.rows || 3} // FIXED: changed from defaultValue
           style={{
             width: "100%",
             padding: "4px 8px",
@@ -126,6 +126,7 @@ function TextAreaNode({ data, isConnectable }) {
             resize: "vertical",
           }}
           disabled
+          readOnly
         />
       </div>
 

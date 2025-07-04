@@ -30,7 +30,7 @@ function CheckboxNode({ data, isConnectable }) {
         <input
           type="text"
           placeholder="Enter field label"
-          defaultValue={data.label || ""}
+          value={data.label || ""} // FIXED: changed from defaultValue
           style={{
             width: "100%",
             padding: "4px 8px",
@@ -55,7 +55,7 @@ function CheckboxNode({ data, isConnectable }) {
         <input
           type="text"
           placeholder="Text next to checkbox"
-          defaultValue={data.checkboxText || ""}
+          value={data.checkboxText || ""} // FIXED: changed from defaultValue
           style={{
             width: "100%",
             padding: "4px 8px",
@@ -86,7 +86,7 @@ function CheckboxNode({ data, isConnectable }) {
         >
           <input
             type="checkbox"
-            defaultChecked={data.defaultChecked || false}
+            checked={data.defaultChecked || false} // FIXED: changed from defaultChecked
             onChange={(e) => {
               if (data.onChange) {
                 data.onChange(data.id, {
@@ -129,8 +129,9 @@ function CheckboxNode({ data, isConnectable }) {
         >
           <input
             type="checkbox"
-            defaultChecked={data.defaultChecked || false}
+            checked={data.defaultChecked || false} // FIXED: changed from defaultChecked
             disabled
+            readOnly
           />
           {data.checkboxText || "Checkbox option text"}
         </label>

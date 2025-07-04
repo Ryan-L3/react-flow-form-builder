@@ -1,10 +1,17 @@
 import { Handle, Position } from "@xyflow/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function DropDownNode({ data, isConnectable }) {
   const [options, setOptions] = useState(
     data.options || ["Option 1", "Option 2", "Option 3"]
   );
+
+  // Sync local state with data.options when data changes
+  useEffect(() => {
+    if (data.options) {
+      setOptions(data.options);
+    }
+  }, [data.options]);
 
   const addOption = () => {
     const newOptions = [...options, `Option ${options.length + 1}`];
@@ -61,7 +68,7 @@ function DropDownNode({ data, isConnectable }) {
         <input
           type="text"
           placeholder="Enter field label"
-          defaultValue={data.label || ""}
+          value={data.label || ""} // FIXED: changed from defaultValue
           style={{
             width: "100%",
             padding: "4px 8px",

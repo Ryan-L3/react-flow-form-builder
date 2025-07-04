@@ -220,7 +220,6 @@ function MasterOutputNode({ data, isConnectable }) {
           padding: "12px",
           borderRadius: "6px",
           border: "1px solid #ddd",
-          maxHeight: "400px",
           overflow: "auto",
         }}
       >
