@@ -1,38 +1,21 @@
-# Base on Node.js LTS (Long Term Support)
-FROM node:18-alpine AS builder
+FROM node:20-alpine
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package.json package-lock.json* ./
+# Copy package files first for better caching
+COPY package*.json ./
 
-# Install dependencies
-RUN npm ci
+# Install all dependencies
+RUN npm install && npm cache clean --force
 
-# Copy the rest of the application code
+# Copy source code
 COPY . .
 
-# Build application
+# Build the application
 RUN npm run build
 
-# Production image
-FROM node:18-alpine AS runner
+# Expose the port your app runs on
+EXPOSE 3000
 
-WORKDIR /app
-
-# Set to production environment
-ENV NODE_ENV=production
-
-# Copy necessary files from builder stage
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/next.config.js ./next.config.js
-
-# Expose the port the app will run on
-EXPOSE 3001
-
-# Command to run the application
+# Start the application
 CMD ["npm", "start"]
