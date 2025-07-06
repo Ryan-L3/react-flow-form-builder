@@ -1,3 +1,4 @@
+"use client";
 import { useState, useCallback, useEffect, useRef } from "react";
 import {
   ReactFlow,
@@ -38,6 +39,7 @@ let nodeId = 2;
 function FlowContent() {
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
+  const [isMobile, setIsMobile] = useState(false);
   const reactFlowWrapper = useRef(null);
 
   // Update node data function
@@ -58,11 +60,36 @@ function FlowContent() {
     });
   }, []);
 
+  // Delete node function
+  const deleteNode = useCallback((nodeId) => {
+    setNodes((currentNodes) =>
+      currentNodes.filter((node) => node.id !== nodeId)
+    );
+    setEdges((currentEdges) =>
+      currentEdges.filter(
+        (edge) => edge.source !== nodeId && edge.target !== nodeId
+      )
+    );
+  }, []);
+
+  // Handle mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   // Generate new node data based on type
   const createNodeData = (type) => {
     const baseData = {
       id: `${type}-${nodeId}`,
       onChange: updateNodeData,
+      onDelete: deleteNode,
     };
 
     switch (type) {
@@ -141,6 +168,7 @@ function FlowContent() {
           placeholder: "Enter your name",
           id: "text-1",
           onChange: updateNodeData,
+          onDelete: deleteNode,
         },
         position: { x: 100, y: 100 },
       },
@@ -275,9 +303,21 @@ function FlowContent() {
         onDragOver={onDragOver}
         nodeTypes={nodeTypes}
         fitView
+        fitViewOptions={{
+          padding: 0.3,
+          minZoom: 0.5,
+          maxZoom: 1.5,
+        }}
       >
         <Background />
-        <MiniMap pannable zoomable />
+        <MiniMap
+          pannable
+          zoomable
+          style={{
+            width: isMobile ? 120 : 200,
+            height: isMobile ? 80 : 150,
+          }}
+        />
         <Controls position="top-right" />
       </ReactFlow>
 

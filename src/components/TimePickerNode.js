@@ -15,13 +15,38 @@ function TimePickerNode({ data, isConnectable }) {
       {/* Node Header */}
       <div
         style={{
-          fontWeight: "bold",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
           marginBottom: "8px",
-          color: "#333",
-          fontSize: "14px",
         }}
       >
-        🕐 Time Picker Field
+        <div
+          style={{
+            fontWeight: "bold",
+            color: "#333",
+            fontSize: "14px",
+          }}
+        >
+          🕐 Time Picker Field
+        </div>
+        <button
+          onClick={() => data.onDelete && data.onDelete(data.id)}
+          style={{
+            background: "#ff4444",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            padding: "4px 8px",
+            fontSize: "12px",
+            cursor: "pointer",
+            fontWeight: "bold",
+          }}
+          onMouseOver={(e) => e.target.style.background = "#cc0000"}
+          onMouseOut={(e) => e.target.style.background = "#ff4444"}
+        >
+          ×
+        </button>
       </div>
 
       {/* Field Label Input */}
