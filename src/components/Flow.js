@@ -40,6 +40,9 @@ function FlowContent() {
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
+  const [formTitle, setFormTitle] = useState("Untitled Form");
+  const [formDescription, setFormDescription] = useState("");
+  const [showSettings, setShowSettings] = useState(false);
   const reactFlowWrapper = useRef(null);
 
   // Update node data function
@@ -277,8 +280,8 @@ function FlowContent() {
   const exportForm = useCallback(() => {
     const formData = {
       version: "1.0",
-      title: "Untitled Form",
-      description: "",
+      title: formTitle,
+      description: formDescription,
       timestamp: new Date().toISOString(),
       nodes: nodes.map(node => ({
         ...node,
@@ -301,7 +304,7 @@ function FlowContent() {
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);
     linkElement.click();
-  }, [nodes, edges]);
+  }, [nodes, edges, formTitle, formDescription]);
 
   // Import form function
   const importForm = useCallback((event) => {
@@ -340,6 +343,10 @@ function FlowContent() {
 
         setNodes(restoredNodes);
         setEdges(formData.edges);
+        
+        // Restore form title and description
+        setFormTitle(formData.title || "Untitled Form");
+        setFormDescription(formData.description || "");
         
         alert(`Form "${formData.title}" imported successfully!`);
       } catch (error) {
@@ -428,6 +435,36 @@ function FlowContent() {
       {/* Node Toolbar */}
       <NodeToolbar onAddNode={onAddNode} />
       
+      {/* Navigation */}
+      <div
+        style={{
+          position: "absolute",
+          top: "20px",
+          left: "20px",
+          zIndex: 1000,
+        }}
+      >
+        <a
+          href="/render"
+          style={{
+            display: "inline-block",
+            padding: "8px 16px",
+            background: "#9C27B0",
+            color: "white",
+            textDecoration: "none",
+            borderRadius: "4px",
+            fontSize: "13px",
+            fontWeight: "500",
+            transition: "background-color 0.2s",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+          }}
+          onMouseOver={(e) => e.target.style.backgroundColor = "#7B1FA2"}
+          onMouseOut={(e) => e.target.style.backgroundColor = "#9C27B0"}
+        >
+          📋 Form Renderer
+        </a>
+      </div>
+
       {/* Import/Export Controls */}
       <div
         style={{
@@ -439,6 +476,31 @@ function FlowContent() {
           gap: "8px",
         }}
       >
+        {/* Settings Button */}
+        <button
+          onClick={() => setShowSettings(true)}
+          style={{
+            background: "#FF9800",
+            color: "white",
+            border: "none",
+            borderRadius: "6px",
+            padding: "8px 12px",
+            fontSize: "13px",
+            cursor: "pointer",
+            fontWeight: "bold",
+            display: "flex",
+            alignItems: "center",
+            gap: "4px",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+            transition: "background-color 0.2s",
+          }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#F57C00")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#FF9800")}
+          title="Form settings"
+        >
+          ⚙️ Settings
+        </button>
+
         {/* Export Button */}
         <button
           onClick={exportForm}
@@ -500,6 +562,143 @@ function FlowContent() {
           </button>
         </div>
       </div>
+
+      {/* Form Settings Modal */}
+      {showSettings && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0,0,0,0.5)",
+          zIndex: 2000,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "20px"
+        }}>
+          <div style={{
+            backgroundColor: "white",
+            borderRadius: "8px",
+            padding: "24px",
+            maxWidth: "500px",
+            width: "100%",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.2)"
+          }}>
+            <h3 style={{
+              margin: "0 0 20px 0",
+              fontSize: "20px",
+              fontWeight: "bold",
+              color: "#333"
+            }}>
+              Form Settings
+            </h3>
+            
+            <div style={{ marginBottom: "16px" }}>
+              <label style={{
+                display: "block",
+                fontSize: "14px",
+                fontWeight: "600",
+                marginBottom: "6px",
+                color: "#333"
+              }}>
+                Form Title
+              </label>
+              <input
+                type="text"
+                value={formTitle}
+                onChange={(e) => setFormTitle(e.target.value)}
+                placeholder="Enter form title"
+                style={{
+                  width: "100%",
+                  padding: "10px 12px",
+                  border: "1px solid #ddd",
+                  borderRadius: "4px",
+                  fontSize: "14px",
+                  outline: "none",
+                  transition: "border-color 0.2s"
+                }}
+                onFocus={(e) => e.target.style.borderColor = "#2196F3"}
+                onBlur={(e) => e.target.style.borderColor = "#ddd"}
+              />
+            </div>
+
+            <div style={{ marginBottom: "24px" }}>
+              <label style={{
+                display: "block",
+                fontSize: "14px",
+                fontWeight: "600",
+                marginBottom: "6px",
+                color: "#333"
+              }}>
+                Form Description
+              </label>
+              <textarea
+                value={formDescription}
+                onChange={(e) => setFormDescription(e.target.value)}
+                placeholder="Enter form description (optional)"
+                rows={3}
+                style={{
+                  width: "100%",
+                  padding: "10px 12px",
+                  border: "1px solid #ddd",
+                  borderRadius: "4px",
+                  fontSize: "14px",
+                  outline: "none",
+                  resize: "vertical",
+                  transition: "border-color 0.2s"
+                }}
+                onFocus={(e) => e.target.style.borderColor = "#2196F3"}
+                onBlur={(e) => e.target.style.borderColor = "#ddd"}
+              />
+            </div>
+
+            <div style={{
+              display: "flex",
+              gap: "12px",
+              justifyContent: "flex-end"
+            }}>
+              <button
+                onClick={() => setShowSettings(false)}
+                style={{
+                  padding: "10px 20px",
+                  background: "#f5f5f5",
+                  color: "#666",
+                  border: "1px solid #ddd",
+                  borderRadius: "4px",
+                  fontSize: "14px",
+                  cursor: "pointer",
+                  fontWeight: "500",
+                  transition: "background-color 0.2s"
+                }}
+                onMouseOver={(e) => e.target.style.backgroundColor = "#e0e0e0"}
+                onMouseOut={(e) => e.target.style.backgroundColor = "#f5f5f5"}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => setShowSettings(false)}
+                style={{
+                  padding: "10px 20px",
+                  background: "#2196F3",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  fontSize: "14px",
+                  cursor: "pointer",
+                  fontWeight: "500",
+                  transition: "background-color 0.2s"
+                }}
+                onMouseOver={(e) => e.target.style.backgroundColor = "#1976D2"}
+                onMouseOut={(e) => e.target.style.backgroundColor = "#2196F3"}
+              >
+                Save Settings
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
