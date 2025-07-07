@@ -3,6 +3,7 @@ import { Handle, Position } from "@xyflow/react";
 function MasterOutputNode({ data, isConnectable }) {
   // Get connected form fields from data
   const connectedFields = data.connectedFields || [];
+  const onReorderFields = data.onReorderFields;
 
   const handleExport = () => {
     const formData = {
@@ -13,12 +14,92 @@ function MasterOutputNode({ data, isConnectable }) {
     alert("Form exported! Check console for details.");
   };
 
+  const moveFieldUp = (index) => {
+    if (index > 0 && onReorderFields) {
+      onReorderFields(index, index - 1);
+    }
+  };
+
+  const moveFieldDown = (index) => {
+    if (index < connectedFields.length - 1 && onReorderFields) {
+      onReorderFields(index, index + 1);
+    }
+  };
+
   // Render different field types in the preview
   const renderField = (field, index) => {
+    const fieldContent = renderFieldContent(field, index);
+    
+    return (
+      <div key={index} style={{ position: "relative", border: "1px solid #e0e0e0", borderRadius: "4px", padding: "8px" }}>
+        {/* Reorder Controls */}
+        <div style={{
+          position: "absolute",
+          top: "4px",
+          right: "4px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "2px",
+          zIndex: 10
+        }}>
+          <button
+            onClick={() => moveFieldUp(index)}
+            disabled={index === 0}
+            style={{
+              width: "20px",
+              height: "20px",
+              padding: "0",
+              border: "1px solid #ccc",
+              borderRadius: "2px",
+              background: index === 0 ? "#f5f5f5" : "#fff",
+              cursor: index === 0 ? "not-allowed" : "pointer",
+              fontSize: "12px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              opacity: index === 0 ? 0.5 : 1,
+            }}
+            title="Move up"
+          >
+            ▲
+          </button>
+          <button
+            onClick={() => moveFieldDown(index)}
+            disabled={index === connectedFields.length - 1}
+            style={{
+              width: "20px",
+              height: "20px",
+              padding: "0",
+              border: "1px solid #ccc",
+              borderRadius: "2px",
+              background: index === connectedFields.length - 1 ? "#f5f5f5" : "#fff",
+              cursor: index === connectedFields.length - 1 ? "not-allowed" : "pointer",
+              fontSize: "12px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              opacity: index === connectedFields.length - 1 ? 0.5 : 1,
+            }}
+            title="Move down"
+          >
+            ▼
+          </button>
+        </div>
+        
+        {/* Field Content */}
+        <div style={{ paddingRight: "30px" }}>
+          {fieldContent}
+        </div>
+      </div>
+    );
+  };
+
+  // Render field content based on type
+  const renderFieldContent = (field, index) => {
     switch (field.type) {
       case "textInput":
         return (
-          <div key={index}>
+          <div>
             <label
               style={{
                 display: "block",
@@ -50,7 +131,7 @@ function MasterOutputNode({ data, isConnectable }) {
 
       case "textArea":
         return (
-          <div key={index}>
+          <div>
             <label
               style={{
                 display: "block",
@@ -83,7 +164,7 @@ function MasterOutputNode({ data, isConnectable }) {
 
       case "dropdown":
         return (
-          <div key={index}>
+          <div>
             <label
               style={{
                 display: "block",
@@ -121,7 +202,7 @@ function MasterOutputNode({ data, isConnectable }) {
 
       case "checkbox":
         return (
-          <div key={index}>
+          <div>
             <div
               style={{
                 fontSize: "13px",
@@ -156,7 +237,7 @@ function MasterOutputNode({ data, isConnectable }) {
         );
       case "datePicker":
         return (
-          <div key={index}>
+          <div>
             <label
               style={{
                 display: "block",
@@ -192,7 +273,7 @@ function MasterOutputNode({ data, isConnectable }) {
 
       case "timePicker":
         return (
-          <div key={index}>
+          <div>
             <label
               style={{
                 display: "block",
@@ -229,7 +310,6 @@ function MasterOutputNode({ data, isConnectable }) {
       default:
         return (
           <div
-            key={index}
             style={{
               padding: "8px",
               background: "#f5f5f5",
