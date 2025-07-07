@@ -6,8 +6,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production && npm cache clean --force
+# Install ALL dependencies (including dev) for building
+RUN npm ci && npm cache clean --force
 
 # Copy source code
 COPY . .
@@ -23,6 +23,10 @@ WORKDIR /app
 # Create a non-root user
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
+
+# Copy package files and install only production dependencies
+COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
 
 # Copy built application
 COPY --from=builder /app/next.config.js ./
