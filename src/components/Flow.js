@@ -21,6 +21,7 @@ import MasterOutputNode from "./MasterOutputNode";
 import NodeToolbar from "./NodeToolbar";
 import DatePickerNode from "./DatePickerNode";
 import TimePickerNode from "./TimePickerNode";
+import Link from "next/link";
 
 // Define the custom node types
 const nodeTypes = {
@@ -83,7 +84,7 @@ function FlowContent() {
           const connectedFields = [...(node.data.connectedFields || [])];
           const [movedField] = connectedFields.splice(fromIndex, 1);
           connectedFields.splice(toIndex, 0, movedField);
-          
+
           return {
             ...node,
             data: {
@@ -103,69 +104,72 @@ function FlowContent() {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-    
+
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // Generate new node data based on type
-  const createNodeData = useCallback((type) => {
-    const baseData = {
-      id: `${type}-${nodeId}`,
-      onChange: updateNodeData,
-      onDelete: deleteNode,
-    };
+  const createNodeData = useCallback(
+    (type) => {
+      const baseData = {
+        id: `${type}-${nodeId}`,
+        onChange: updateNodeData,
+        onDelete: deleteNode,
+      };
 
-    switch (type) {
-      case "textInput":
-        return {
-          ...baseData,
-          label: "New Text Field",
-          placeholder: "Enter text...",
-        };
-      case "textArea":
-        return {
-          ...baseData,
-          label: "New Text Area",
-          placeholder: "Enter long text...",
-          rows: 3,
-        };
-      case "dropdown":
-        return {
-          ...baseData,
-          label: "New Dropdown",
-          options: ["Option 1", "Option 2", "Option 3"],
-        };
-      case "checkbox":
-        return {
-          ...baseData,
-          label: "New Checkbox Group",
-          checkboxText: "I agree to the terms",
-          defaultChecked: false,
-        };
-      case "datePicker":
-        return {
-          ...baseData,
-          label: "New Date Field",
-          dateFormat: "YYYY-MM-DD",
-          defaultToday: false,
-          required: false,
-        };
-      case "timePicker":
-        return {
-          ...baseData,
-          label: "New Time Field",
-          timeFormat: "24h",
-          step: "1",
-          defaultNow: false,
-          required: false,
-        };
-      default:
-        return baseData;
-    }
-  }, [updateNodeData, deleteNode]);
+      switch (type) {
+        case "textInput":
+          return {
+            ...baseData,
+            label: "New Text Field",
+            placeholder: "Enter text...",
+          };
+        case "textArea":
+          return {
+            ...baseData,
+            label: "New Text Area",
+            placeholder: "Enter long text...",
+            rows: 3,
+          };
+        case "dropdown":
+          return {
+            ...baseData,
+            label: "New Dropdown",
+            options: ["Option 1", "Option 2", "Option 3"],
+          };
+        case "checkbox":
+          return {
+            ...baseData,
+            label: "New Checkbox Group",
+            checkboxText: "I agree to the terms",
+            defaultChecked: false,
+          };
+        case "datePicker":
+          return {
+            ...baseData,
+            label: "New Date Field",
+            dateFormat: "YYYY-MM-DD",
+            defaultToday: false,
+            required: false,
+          };
+        case "timePicker":
+          return {
+            ...baseData,
+            label: "New Time Field",
+            timeFormat: "24h",
+            step: "1",
+            defaultNow: false,
+            required: false,
+          };
+        default:
+          return baseData;
+      }
+    },
+    [updateNodeData, deleteNode]
+  );
 
   // Add new node function
   const onAddNode = useCallback(
@@ -283,81 +287,89 @@ function FlowContent() {
       title: formTitle,
       description: formDescription,
       timestamp: new Date().toISOString(),
-      nodes: nodes.map(node => ({
+      nodes: nodes.map((node) => ({
         ...node,
         data: {
           ...node.data,
           // Remove function references for serialization
           onChange: undefined,
           onDelete: undefined,
-        }
+        },
       })),
       edges: edges,
     };
 
     const dataStr = JSON.stringify(formData, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
-    const exportFileDefaultName = `form-${new Date().toISOString().split('T')[0]}.json`;
-    
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
+    const dataUri =
+      "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
+
+    const exportFileDefaultName = `form-${
+      new Date().toISOString().split("T")[0]
+    }.json`;
+
+    const linkElement = document.createElement("a");
+    linkElement.setAttribute("href", dataUri);
+    linkElement.setAttribute("download", exportFileDefaultName);
     linkElement.click();
   }, [nodes, edges, formTitle, formDescription]);
 
   // Import form function
-  const importForm = useCallback((event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+  const importForm = useCallback(
+    (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const formData = JSON.parse(e.target.result);
-        
-        // Validate the imported data
-        if (!formData.nodes || !formData.edges || !formData.version) {
-          alert('Invalid form file format');
-          return;
-        }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const formData = JSON.parse(e.target.result);
 
-        // Restore function references to nodes
-        const restoredNodes = formData.nodes.map(node => ({
-          ...node,
-          data: {
-            ...node.data,
-            onChange: node.type !== 'masterOutput' ? updateNodeData : undefined,
-            onDelete: node.type !== 'masterOutput' ? deleteNode : undefined,
+          // Validate the imported data
+          if (!formData.nodes || !formData.edges || !formData.version) {
+            alert("Invalid form file format");
+            return;
           }
-        }));
 
-        // Update node ID counter to avoid conflicts
-        const maxId = Math.max(...restoredNodes
-          .filter(node => node.id.includes('-'))
-          .map(node => parseInt(node.id.split('-')[1]) || 0)
-        );
-        if (maxId >= nodeId) {
-          nodeId = maxId + 1;
+          // Restore function references to nodes
+          const restoredNodes = formData.nodes.map((node) => ({
+            ...node,
+            data: {
+              ...node.data,
+              onChange:
+                node.type !== "masterOutput" ? updateNodeData : undefined,
+              onDelete: node.type !== "masterOutput" ? deleteNode : undefined,
+            },
+          }));
+
+          // Update node ID counter to avoid conflicts
+          const maxId = Math.max(
+            ...restoredNodes
+              .filter((node) => node.id.includes("-"))
+              .map((node) => parseInt(node.id.split("-")[1]) || 0)
+          );
+          if (maxId >= nodeId) {
+            nodeId = maxId + 1;
+          }
+
+          setNodes(restoredNodes);
+          setEdges(formData.edges);
+
+          // Restore form title and description
+          setFormTitle(formData.title || "Untitled Form");
+          setFormDescription(formData.description || "");
+
+          alert(`Form "${formData.title}" imported successfully!`);
+        } catch (error) {
+          alert("Error importing form: " + error.message);
         }
+      };
+      reader.readAsText(file);
 
-        setNodes(restoredNodes);
-        setEdges(formData.edges);
-        
-        // Restore form title and description
-        setFormTitle(formData.title || "Untitled Form");
-        setFormDescription(formData.description || "");
-        
-        alert(`Form "${formData.title}" imported successfully!`);
-      } catch (error) {
-        alert('Error importing form: ' + error.message);
-      }
-    };
-    reader.readAsText(file);
-    
-    // Clear the input
-    event.target.value = '';
-  }, [updateNodeData, deleteNode]);
+      // Clear the input
+      event.target.value = "";
+    },
+    [updateNodeData, deleteNode]
+  );
 
   // Handle drag and drop from toolbar
   const onDragOver = useCallback((event) => {
@@ -434,7 +446,7 @@ function FlowContent() {
 
       {/* Node Toolbar */}
       <NodeToolbar onAddNode={onAddNode} />
-      
+
       {/* Navigation */}
       <div
         style={{
@@ -444,7 +456,7 @@ function FlowContent() {
           zIndex: 1000,
         }}
       >
-        <a
+        <Link
           href="/render"
           style={{
             display: "inline-block",
@@ -458,11 +470,11 @@ function FlowContent() {
             transition: "background-color 0.2s",
             boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
           }}
-          onMouseOver={(e) => e.target.style.backgroundColor = "#7B1FA2"}
-          onMouseOut={(e) => e.target.style.backgroundColor = "#9C27B0"}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#7B1FA2")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#9C27B0")}
         >
           📋 Form Renderer
-        </a>
+        </Link>
       </div>
 
       {/* Import/Export Controls */}
@@ -565,44 +577,52 @@ function FlowContent() {
 
       {/* Form Settings Modal */}
       {showSettings && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0,0,0,0.5)",
-          zIndex: 2000,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "20px"
-        }}>
-          <div style={{
-            backgroundColor: "white",
-            borderRadius: "8px",
-            padding: "24px",
-            maxWidth: "500px",
-            width: "100%",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.2)"
-          }}>
-            <h3 style={{
-              margin: "0 0 20px 0",
-              fontSize: "20px",
-              fontWeight: "bold",
-              color: "#333"
-            }}>
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            zIndex: 2000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              borderRadius: "8px",
+              padding: "24px",
+              maxWidth: "500px",
+              width: "100%",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+            }}
+          >
+            <h3
+              style={{
+                margin: "0 0 20px 0",
+                fontSize: "20px",
+                fontWeight: "bold",
+                color: "#333",
+              }}
+            >
               Form Settings
             </h3>
-            
+
             <div style={{ marginBottom: "16px" }}>
-              <label style={{
-                display: "block",
-                fontSize: "14px",
-                fontWeight: "600",
-                marginBottom: "6px",
-                color: "#333"
-              }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  marginBottom: "6px",
+                  color: "#333",
+                }}
+              >
                 Form Title
               </label>
               <input
@@ -617,21 +637,23 @@ function FlowContent() {
                   borderRadius: "4px",
                   fontSize: "14px",
                   outline: "none",
-                  transition: "border-color 0.2s"
+                  transition: "border-color 0.2s",
                 }}
-                onFocus={(e) => e.target.style.borderColor = "#2196F3"}
-                onBlur={(e) => e.target.style.borderColor = "#ddd"}
+                onFocus={(e) => (e.target.style.borderColor = "#2196F3")}
+                onBlur={(e) => (e.target.style.borderColor = "#ddd")}
               />
             </div>
 
             <div style={{ marginBottom: "24px" }}>
-              <label style={{
-                display: "block",
-                fontSize: "14px",
-                fontWeight: "600",
-                marginBottom: "6px",
-                color: "#333"
-              }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  marginBottom: "6px",
+                  color: "#333",
+                }}
+              >
                 Form Description
               </label>
               <textarea
@@ -647,18 +669,20 @@ function FlowContent() {
                   fontSize: "14px",
                   outline: "none",
                   resize: "vertical",
-                  transition: "border-color 0.2s"
+                  transition: "border-color 0.2s",
                 }}
-                onFocus={(e) => e.target.style.borderColor = "#2196F3"}
-                onBlur={(e) => e.target.style.borderColor = "#ddd"}
+                onFocus={(e) => (e.target.style.borderColor = "#2196F3")}
+                onBlur={(e) => (e.target.style.borderColor = "#ddd")}
               />
             </div>
 
-            <div style={{
-              display: "flex",
-              gap: "12px",
-              justifyContent: "flex-end"
-            }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                justifyContent: "flex-end",
+              }}
+            >
               <button
                 onClick={() => setShowSettings(false)}
                 style={{
@@ -670,10 +694,12 @@ function FlowContent() {
                   fontSize: "14px",
                   cursor: "pointer",
                   fontWeight: "500",
-                  transition: "background-color 0.2s"
+                  transition: "background-color 0.2s",
                 }}
-                onMouseOver={(e) => e.target.style.backgroundColor = "#e0e0e0"}
-                onMouseOut={(e) => e.target.style.backgroundColor = "#f5f5f5"}
+                onMouseOver={(e) =>
+                  (e.target.style.backgroundColor = "#e0e0e0")
+                }
+                onMouseOut={(e) => (e.target.style.backgroundColor = "#f5f5f5")}
               >
                 Cancel
               </button>
@@ -688,10 +714,12 @@ function FlowContent() {
                   fontSize: "14px",
                   cursor: "pointer",
                   fontWeight: "500",
-                  transition: "background-color 0.2s"
+                  transition: "background-color 0.2s",
                 }}
-                onMouseOver={(e) => e.target.style.backgroundColor = "#1976D2"}
-                onMouseOut={(e) => e.target.style.backgroundColor = "#2196F3"}
+                onMouseOver={(e) =>
+                  (e.target.style.backgroundColor = "#1976D2")
+                }
+                onMouseOut={(e) => (e.target.style.backgroundColor = "#2196F3")}
               >
                 Save Settings
               </button>

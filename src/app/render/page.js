@@ -1,6 +1,7 @@
 "use client";
-import { useState } from 'react';
-import FormRenderer from '@/components/FormRenderer';
+import { useState } from "react";
+import FormRenderer from "@/components/FormRenderer";
+import Link from "next/link";
 
 export default function RenderPage() {
   const [formData, setFormData] = useState(null);
@@ -12,7 +13,7 @@ export default function RenderPage() {
     const file = event.target.files[0];
     if (!file) return;
 
-    if (!file.name.endsWith('.json')) {
+    if (!file.name.endsWith(".json")) {
       setError("Please select a JSON file");
       return;
     }
@@ -24,7 +25,7 @@ export default function RenderPage() {
     reader.onload = (e) => {
       try {
         const data = JSON.parse(e.target.result);
-        
+
         // Validate the form data structure
         if (!data.nodes || !data.edges) {
           throw new Error("Invalid form file format - missing nodes or edges");
@@ -50,23 +51,26 @@ export default function RenderPage() {
     };
 
     reader.readAsText(file);
-    
+
     // Clear the input to allow re-uploading the same file
-    event.target.value = '';
+    event.target.value = "";
   };
 
   const handleFormSubmit = async (submissionData) => {
     console.log("Form submitted:", submissionData);
-    
+
     // You can customize this to send to your backend
     // For now, we'll just download the submission as JSON
     const dataStr = JSON.stringify(submissionData, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-    const exportFileDefaultName = `form-submission-${new Date().toISOString().split('T')[0]}.json`;
-    
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
+    const dataUri =
+      "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
+    const exportFileDefaultName = `form-submission-${
+      new Date().toISOString().split("T")[0]
+    }.json`;
+
+    const linkElement = document.createElement("a");
+    linkElement.setAttribute("href", dataUri);
+    linkElement.setAttribute("download", exportFileDefaultName);
     linkElement.click();
   };
 
@@ -76,44 +80,54 @@ export default function RenderPage() {
   };
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "#f5f5f5",
-      padding: "20px"
-    }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#f5f5f5",
+        padding: "20px",
+      }}
+    >
       {/* Header */}
-      <div style={{
-        maxWidth: "800px",
-        margin: "0 auto",
-        marginBottom: "24px"
-      }}>
-        <h1 style={{
-          fontSize: "28px",
-          fontWeight: "bold",
-          color: "#333",
-          margin: "0 0 8px 0",
-          textAlign: "center"
-        }}>
+      <div
+        style={{
+          maxWidth: "800px",
+          margin: "0 auto",
+          marginBottom: "24px",
+        }}
+      >
+        <h1
+          style={{
+            fontSize: "28px",
+            fontWeight: "bold",
+            color: "#333",
+            margin: "0 0 8px 0",
+            textAlign: "center",
+          }}
+        >
           Form Renderer
         </h1>
-        <p style={{
-          fontSize: "16px",
-          color: "#666",
-          textAlign: "center",
-          margin: "0"
-        }}>
+        <p
+          style={{
+            fontSize: "16px",
+            color: "#666",
+            textAlign: "center",
+            margin: "0",
+          }}
+        >
           Upload and render forms created with the Form Builder
         </p>
       </div>
 
       {/* Navigation */}
-      <div style={{
-        maxWidth: "800px",
-        margin: "0 auto",
-        marginBottom: "24px",
-        textAlign: "center"
-      }}>
-        <a
+      <div
+        style={{
+          maxWidth: "800px",
+          margin: "0 auto",
+          marginBottom: "24px",
+          textAlign: "center",
+        }}
+      >
+        <Link
           href="/"
           style={{
             display: "inline-block",
@@ -126,50 +140,61 @@ export default function RenderPage() {
             fontWeight: "500",
             transition: "background-color 0.2s",
           }}
-          onMouseOver={(e) => e.target.style.backgroundColor = "#1976D2"}
-          onMouseOut={(e) => e.target.style.backgroundColor = "#2196F3"}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#1976D2")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#2196F3")}
         >
           ← Back to Form Builder
-        </a>
+        </Link>
       </div>
 
       {/* File Upload Section */}
       {!formData && (
-        <div style={{
-          maxWidth: "600px",
-          margin: "0 auto",
-          background: "#fff",
-          borderRadius: "8px",
-          padding: "32px",
-          boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-          textAlign: "center"
-        }}>
-          <div style={{
-            fontSize: "48px",
-            marginBottom: "16px"
-          }}>
+        <div
+          style={{
+            maxWidth: "600px",
+            margin: "0 auto",
+            background: "#fff",
+            borderRadius: "8px",
+            padding: "32px",
+            boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{
+              fontSize: "48px",
+              marginBottom: "16px",
+            }}
+          >
             📄
           </div>
-          <h2 style={{
-            fontSize: "20px",
-            fontWeight: "600",
-            color: "#333",
-            margin: "0 0 8px 0"
-          }}>
+          <h2
+            style={{
+              fontSize: "20px",
+              fontWeight: "600",
+              color: "#333",
+              margin: "0 0 8px 0",
+            }}
+          >
             Upload Form JSON
           </h2>
-          <p style={{
-            fontSize: "14px",
-            color: "#666",
-            margin: "0 0 24px 0"
-          }}>
-            Select a JSON file exported from the Form Builder to render and interact with the form
+          <p
+            style={{
+              fontSize: "14px",
+              color: "#666",
+              margin: "0 0 24px 0",
+            }}
+          >
+            Select a JSON file exported from the Form Builder to render and
+            interact with the form
           </p>
 
-          <div style={{
-            position: "relative",
-            display: "inline-block"
-          }}>
+          <div
+            style={{
+              position: "relative",
+              display: "inline-block",
+            }}
+          >
             <input
               type="file"
               accept=".json"
@@ -195,7 +220,7 @@ export default function RenderPage() {
                 cursor: isLoading ? "not-allowed" : "pointer",
                 fontWeight: "500",
                 transition: "background-color 0.2s",
-                pointerEvents: "none"
+                pointerEvents: "none",
               }}
             >
               {isLoading ? "Loading..." : "Choose JSON File"}
@@ -203,14 +228,16 @@ export default function RenderPage() {
           </div>
 
           {error && (
-            <div style={{
-              marginTop: "16px",
-              padding: "12px",
-              background: "#ffebee",
-              color: "#c62828",
-              borderRadius: "4px",
-              fontSize: "14px"
-            }}>
+            <div
+              style={{
+                marginTop: "16px",
+                padding: "12px",
+                background: "#ffebee",
+                color: "#c62828",
+                borderRadius: "4px",
+                fontSize: "14px",
+              }}
+            >
               {error}
             </div>
           )}
@@ -219,33 +246,41 @@ export default function RenderPage() {
 
       {/* Form Display Section */}
       {formData && (
-        <div style={{
-          maxWidth: "800px",
-          margin: "0 auto"
-        }}>
+        <div
+          style={{
+            maxWidth: "800px",
+            margin: "0 auto",
+          }}
+        >
           {/* Form Controls */}
-          <div style={{
-            background: "#fff",
-            borderRadius: "8px",
-            padding: "16px",
-            marginBottom: "16px",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: "12px"
-          }}>
-            <div style={{
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: "8px",
+              padding: "16px",
+              marginBottom: "16px",
+              boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
               display: "flex",
+              justifyContent: "space-between",
               alignItems: "center",
-              gap: "12px"
-            }}>
-              <label style={{
-                fontSize: "14px",
-                fontWeight: "500",
-                color: "#333"
-              }}>
+              flexWrap: "wrap",
+              gap: "12px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+              }}
+            >
+              <label
+                style={{
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  color: "#333",
+                }}
+              >
                 Mode:
               </label>
               <select
@@ -256,7 +291,7 @@ export default function RenderPage() {
                   border: "1px solid #ddd",
                   borderRadius: "4px",
                   fontSize: "14px",
-                  background: "white"
+                  background: "white",
                 }}
               >
                 <option value="interactive">Interactive</option>
@@ -264,10 +299,12 @@ export default function RenderPage() {
               </select>
             </div>
 
-            <div style={{
-              display: "flex",
-              gap: "8px"
-            }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "8px",
+              }}
+            >
               <button
                 onClick={clearForm}
                 style={{
@@ -281,8 +318,10 @@ export default function RenderPage() {
                   fontWeight: "500",
                   transition: "all 0.2s",
                 }}
-                onMouseOver={(e) => e.target.style.backgroundColor = "#e0e0e0"}
-                onMouseOut={(e) => e.target.style.backgroundColor = "#f5f5f5"}
+                onMouseOver={(e) =>
+                  (e.target.style.backgroundColor = "#e0e0e0")
+                }
+                onMouseOut={(e) => (e.target.style.backgroundColor = "#f5f5f5")}
               >
                 Load Different Form
               </button>
