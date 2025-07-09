@@ -303,9 +303,8 @@ function FlowContent() {
     const dataUri =
       "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
 
-    const exportFileDefaultName = `form-${
-      new Date().toISOString().split("T")[0]
-    }.json`;
+    const exportFileDefaultName = `form-${new Date().toISOString().split("T")[0]
+      }.json`;
 
     const linkElement = document.createElement("a");
     linkElement.setAttribute("href", dataUri);
@@ -447,36 +446,6 @@ function FlowContent() {
       {/* Node Toolbar */}
       <NodeToolbar onAddNode={onAddNode} />
 
-      {/* Navigation */}
-      <div
-        style={{
-          position: "absolute",
-          top: "20px",
-          left: "20px",
-          zIndex: 1000,
-        }}
-      >
-        <Link
-          href="/render"
-          style={{
-            display: "inline-block",
-            padding: "8px 16px",
-            background: "#9C27B0",
-            color: "white",
-            textDecoration: "none",
-            borderRadius: "4px",
-            fontSize: "13px",
-            fontWeight: "500",
-            transition: "background-color 0.2s",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-          }}
-          onMouseOver={(e) => (e.target.style.backgroundColor = "#7B1FA2")}
-          onMouseOut={(e) => (e.target.style.backgroundColor = "#9C27B0")}
-        >
-          📋 Form Renderer
-        </Link>
-      </div>
-
       {/* Import/Export Controls */}
       <div
         style={{
@@ -512,6 +481,26 @@ function FlowContent() {
         >
           ⚙️ Settings
         </button>
+
+        <Link
+          href="/render"
+          style={{
+            display: "inline-block",
+            padding: "8px 16px",
+            background: "#9C27B0",
+            color: "white",
+            textDecoration: "none",
+            borderRadius: "4px",
+            fontSize: "13px",
+            fontWeight: "500",
+            transition: "background-color 0.2s",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+          }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#7B1FA2")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#9C27B0")}
+        >
+          📋 Form Renderer
+        </Link>
 
         {/* Export Button */}
         <button
